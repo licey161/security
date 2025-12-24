@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кибербезопасность: Насколько ты защищён?</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-customfonts/0.0.4/jspdf.customfonts.min.js"></script>
+    <!-- Добавлен Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #17a2b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-20px, -20px) rotate(360deg); }
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--secondary);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
+        }
+        
+        .btn:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-accent {
+            background: var(--accent);
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        #start-screen {
+            display: block;
+            text-align: center;
+        }
+        
+        .question {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .option {
+            padding: 18px 20px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .option:hover {
+            background: #e0e7ff;
+            border-color: var(--secondary);
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .option-number {
+            background: white;
+            color: var(--dark);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .option.selected .option-number {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .result-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .correct {
+            border-left: 6px solid var(--success);
+        }
+        
+        .incorrect {
+            border-left: 6px solid var(--accent);
+        }
+        
+        .explanation {
+            margin-top: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 1rem;
+            border-left: 4px solid var(--info);
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 25px 0;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .score-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: var(--light);
+            border-radius: 6px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), #2980b9);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .resource-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+            margin-top: auto;
+            padding-top: 15px;
+            background: var(--primary);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+            color: var(--secondary);
+            font-weight: bold;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .level-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .level-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ddd;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .level-dot.active {
+            background: var(--success);
+            transform: scale(1.3);
+        }
+        
+        .level-dot.partial {
+            background: var(--warning);
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-weight: bold;
+            color: var(--primary);
+            display: none;
+            z-index: 100;
+        }
+        
+        .question-counter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .certificate-btn {
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+            margin-top: 20px;
+        }
+        
+        /* Модальное окно для ввода имени */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .modal-content input:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .question {
+                padding: 20px;
+            }
+            
+            .resource-card {
+                padding: 20px;
+            }
+            
+            .score-value {
+                font-size: 2.5rem;
+            }
+            
+            .timer {
+                position: static;
+                margin: 0 auto 20px;
+                width: fit-content;
+            }
+            
+            .modal-content {
+                padding: 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .options {
+                gap: 10px;
+            }
+            
+            .option {
+                padding: 15px;
+            }
+            
+            .stat-box {
+                min-width: 120px;
+            }
+        }
+        
+        /* Стили для уведомлений */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Уровни безопасности */
+        .security-level {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .level-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .level-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .level-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .expert { color: var(--success); }
+        .good { color: var(--secondary); }
+        .medium { color: var(--warning); }
+        .beginner { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <!-- Таймер -->
+    <div class="timer" id="timer">
+        <i class="fas fa-clock"></i> <span id="time">00:00</span>
+    </div>
+    
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> <span id="notification-text">Уведомление</span>
+    </div>
+    
+    <!-- Модальное окно для ввода имени -->
+    <div class="modal-overlay" id="name-modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-user-edit"></i> Введите ваше имя для сертификата</h3>
+            <input type="text" id="user-name" placeholder="Например: Иван Иванов" maxlength="50">
+            <div class="modal-buttons">
+                <button class="btn btn-success" id="save-name-btn">
+                    <i class="fas fa-check"></i> Сохранить
+                </button>
+                <button class="btn btn-accent" id="skip-name-btn">
+                    <i class="fas fa-times"></i> Пропустить
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> Насколько ты киберзащищён?</h1>
+            <p>Пройди тест и проверь свои знания в области кибербезопасности</p>
+        </header>
+        
+        <!-- Стартовый экран -->
+        <div id="start-screen" class="screen">
+            <h2>Готов проверить свою кибербезопасность?</h2>
+            <p>Этот тест поможет оценить, насколько хорошо ты защищаешь свои данные в интернете и какие привычки стоит улучшить.</p>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">вопросов</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">практические знания</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">полезных PDF-памятки</div>
+                </div>
+            </div>
+            
+            <div style="margin: 30px 0;">
+                <h3>Что ты получишь после теста:</h3>
+                <div style="text-align: left; max-width: 600px; margin: 20px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <i class="fas fa-chart-line" style="color: var(--success); font-size: 1.5rem; margin-right: 15px;"></i>
+                        <div>
+                            <strong>Оценку уровня киберзащищённости</strong>
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">Подробный анализ твоих сильных и слабых сторон</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <i class="fas fa-lightbulb" style="color: var(--warning); font-size: 1.5rem; margin-right: 15px;"></i>
+                        <div>
+                            <strong>Разбор всех ошибок с пояснениями</strong>
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">Узнай, как правильно действовать в каждой ситуации</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-file-pdf" style="color: var(--danger); font-size: 1.5rem; margin-right: 15px;"></i>
+                        <div>
+                            <strong>Полезные материалы и памятки по безопасности</strong>
+                            <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">Скачай PDF-памятки и поделись с друзьями</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="start-btn" class="btn">
+                <i class="fas fa-play"></i> Начать тест
+            </button>
+            <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Среднее время прохождения: 3-5 минут
+            </p>
+        </div>
+        
+        <!-- Экран с вопросами -->
+        <div id="quiz-screen" class="screen">
+            <div class="question-counter">
+                <span>Вопрос <span id="current-question">1</span> из <span id="total-questions">10</span></span>
+                <span id="quiz-timer">00:00</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div id="question-container">
+                <!-- Вопросы будут добавляться динамически -->
+            </div>
+            <div class="navigation">
+                <button id="prev-btn" class="btn">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                <button id="next-btn" class="btn">
+                    Далее <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Экран с результатами -->
+        <div id="results-screen" class="screen">
+            <h2><i class="fas fa-trophy"></i> Результаты теста</h2>
+            
+            <!-- Определение уровня безопасности -->
+            <div id="security-level-container"></div>
+            
+            <div class="score-display">
+                <div>Твой результат:</div>
+                <div class="score-value" id="score">0</div>
+                <div>из <span id="total">10</span> баллов</div>
+                
+                <!-- Индикатор уровня -->
+                <div class="level-indicator" id="level-indicator">
+                    <!-- Уровни будут добавлены динамически -->
+                </div>
+            </div>
+            
+            <!-- Статистика -->
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="correct-count">0</div>
+                    <div class="stat-label">правильных ответов</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="incorrect-count">0</div>
+                    <div class="stat-label">ошибок</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="time-spent">0:00</div>
+                    <div class="stat-label">потрачено времени</div>
+                </div>
+            </div>
+            
+            <div id="results-container">
+                <!-- Результаты будут добавляться динамически -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button id="resources-btn" class="btn btn-success">
+                    <i class="fas fa-download"></i> Скачать полезные материалы
+                </button>
+                <button id="certificate-btn" class="btn certificate-btn">
+                    <i class="fas fa-award"></i> Получить сертификат
+                </button>
+                <button id="share-btn" class="btn btn-accent">
+                    <i class="fas fa-share-alt"></i> Поделиться результатом
+                </button>
+            </div>
+        </div>
+        
+        <!-- Экран с полезными материалами -->
+        <div id="resources-screen" class="screen">
+            <h2><i class="fas fa-book"></i> Полезные материалы по кибербезопасности</h2>
+            <p>Сохрани эти памятки и поделись с друзьями!</p>
+            
+            <div class="resources">
+                <div class="resource-card">
+                    <div class="level-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>Памятка: Защита паролей</h3>
+                    <p>Как создавать надежные пароли и правильно их хранить</p>
+                    <div class="loading" id="loading-passwords">
+                        <i class="fas fa-spinner fa-spin"></i> Генерация PDF...
+                    </div>
+                    <a href="#" class="btn download-btn" id="download-passwords">
+                        <i class="fas fa-file-pdf"></i> Скачать PDF
+                    </a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="level-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Чек-лист: Безопасность в соцсетях</h3>
+                    <p>Проверь настройки приватности и избегай утечек данных</p>
+                    <div class="loading" id="loading-social">
+                        <i class="fas fa-spinner fa-spin"></i> Генерация PDF...
+                    </div>
+                    <a href="#" class="btn download-btn" id="download-social">
+                        <i class="fas fa-file-pdf"></i> Скачать PDF
+                    </a>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="level-icon">
+                        <i class="fas fa-fish"></i>
+                    </div>
+                    <h3>Памятка: Противодействие фишингу</h3>
+                    <p>Как распознать мошеннические письма и сайты</p>
+                    <div class="loading" id="loading-phishing">
+                        <i class="fas fa-spinner fa-spin"></i> Генерация PDF...
+                    </div>
+                    <a href="#" class="btn download-btn" id="download-phishing">
+                        <i class="fas fa-file-pdf"></i> Скачать PDF
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="level-icon">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <h3>Все материалы одним файлом</h3>
+                    <p>Полный комплект памяток по кибербезопасности</p>
+                    <div class="loading" id="loading-all">
+                        <i class="fas fa-spinner fa-spin"></i> Генерация PDF...
+                    </div>
+                    <a href="#" class="btn download-btn" id="download-all">
+                        <i class="fas fa-file-archive"></i> Скачать полный PDF
+                    </a>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button id="restart-btn" class="btn">
+                    <i class="fas fa-redo"></i> Пройти тест снова
+                </button>
+                <button id="back-to-results-btn" class="btn btn-warning">
+                    <i class="fas fa-arrow-left"></i> Вернуться к результатам
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация jsPDF
+        const { jsPDF } = window.jspdf;
+
+        // Вопросы и ответы
+        const questions = [
+            {
+                question: "Как часто вы обновляете программное обеспечение на своих устройствах?",
+                options: [
+                    "Как только выходит обновление",
+                    "Через некоторое время после выхода",
+                    "Только когда перестает работать",
+                    "Никогда не обновляю"
+                ],
+                correctIndex: 0,
+                explanation: "Своевременное обновление ПО критически важно для безопасности, так как обновления часто содержат исправления уязвимостей, которые могут использовать киберпреступники."
+            },
+            {
+                question: "Как вы создаете пароли для своих учетных записей?",
+                options: [
+                    "Использую длинные сложные пароли из разных символов для каждой учетной записи",
+                    "Использую похожие пароли с небольшими вариациями для разных сервисов",
+                    "Использую один простой пароль для всех учетных записей",
+                    "Часто использую пароли типа '123456' или 'qwerty'"
+                ],
+                correctIndex: 0,
+                explanation: "Уникальные сложные пароли для каждой учетной записи — основа безопасности. Рекомендуется использовать менеджеры паролей для их хранения."
+            },
+            {
+                question: "Что вы делаете, получив письмо от банка с просьбой подтвердить данные?",
+                options: [
+                    "Перехожу на сайт банка напрямую (не по ссылке в письме) и проверяю",
+                    "Отвечаю на письмо и предоставляю запрошенную информацию",
+                    "Перехожу по ссылке в письме и ввожу свои данные",
+                    "Игнорирую все подобные письма"
+                ],
+                correctIndex: 0,
+                explanation: "Это классическая фишинговая атака. Банки никогда не запрашивают конфиденциальную информацию по email. Всегда заходите на сайт напрямую, а не по ссылкам из писем."
+            },
+            {
+                question: "Как вы используете общественный Wi-Fi?",
+                options: [
+                    "Только с включенным VPN",
+                    "Использую как обычный Wi-Fi, но не ввожу пароли",
+                    "Пользуюсь как дома: захожу в соцсети, банковские приложения",
+                    "Не пользуюсь общественным Wi-Fi вообще"
+                ],
+                correctIndex: 0,
+                explanation: "Общественные Wi-Fi сети часто не защищены. VPN шифрует ваш трафик, защищая данные от перехвата. Без VPN не следует вводить конфиденциальные данные."
+            },
+            {
+                question: "Что означает значок замка рядом с URL в браузере?",
+                options: [
+                    "Соединение с сайтом зашифровано",
+                    "Сайт абсолютно безопасен и проверен",
+                    "Сайт принадлежит официальной организации",
+                    "Это просто элемент дизайна сайта"
+                ],
+                correctIndex: 0,
+                explanation: "Замок означает, что соединение с сайтом зашифровано по протоколу HTTPS, но не гарантирует, что сайт безопасен или настоящий. Фишинговые сайты тоже могут иметь HTTPS."
+            },
+            {
+                question: "Как вы поступаете с email от неизвестных отправителей?",
+                options: [
+                    "Удаляю, не открывая",
+                    "Открываю, но не перехожу по ссылкам и не открываю вложения",
+                    "Открываю и проверяю, что внутри",
+                    "Отвечаю, чтобы узнать, кто это"
+                ],
+                correctIndex: 0,
+                explanation: "Письма от неизвестных отправителей могут содержать вредоносные вложения или ссылки. Самый безопасный подход — удалять их, не открывая."
+            },
+            {
+                question: "Как часто вы делаете резервные копии важных данных?",
+                options: [
+                    "Регулярно, по расписанию",
+                    "Только когда вспомню",
+                    "Только перед обновлением системы",
+                    "Никогда не делаю резервных копий"
+                ],
+                correctIndex: 0,
+                explanation: "Регулярное резервное копирование защищает ваши данные не только от сбоев оборудования, но и от ransomware-атак, когда злоумышленники шифруют ваши файлы и требуют выкуп."
+            },
+            {
+                question: "Что вы делаете с ненужными устройствами (телефон, жесткий диск) перед утилизацией?",
+                options: [
+                    "Полностью очищаю все данные с помощью специального ПО",
+                    "Удаляю файлы вручную или выполняю сброс к заводским настройкам",
+                    "Просто удаляю основные файлы",
+                    "Ничего не делаю, просто выбрасываю"
+                ],
+                correctIndex: 0,
+                explanation: "Простое удаление файлов или даже сброс к заводским настройкам не всегда полностью стирает данные. Специальное ПО для затирания данных гарантирует, что информация не сможет быть восстановлена."
+            },
+            {
+                question: "Как вы проверяете безопасность ссылки перед переходом?",
+                options: [
+                    "Навожу курсор на ссылку, чтобы увидеть настоящий URL",
+                    "Копирую ссылку и проверяю в поисковике",
+                    "Перехожу, а потом смотрю адрес",
+                    "Не проверяю, просто перехожу"
+                ],
+                correctIndex: 0,
+                explanation: "Наведение курсора на ссылку позволяет увидеть настоящий URL в строке состояния браузера. Это помогает выявить поддельные ссылки, которые маскируются под настоящие сайты."
+            },
+            {
+                question: "Какие данные вы никогда не публикуете в социальных сетях?",
+                options: [
+                    "Паспортные данные, полный адрес, номер кредитной карты",
+                    "Свой текущий город и местонахождение",
+                    "Номер телефона и email",
+                    "Делитесь всем, что считаете интересным"
+                ],
+                correctIndex: 0,
+                explanation: "Конфиденциальная личная информация (паспорт, банковские реквизиты) никогда не должна публиковаться в соцсетях. Этой информацией могут воспользоваться мошенники для кражи личности или финансовых махинаций."
+            }
+        ];
+
+        // Переменные для отслеживания состояния
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let score = 0;
+        let startTime = null;
+        let timerInterval = null;
+        let timeSpent = 0; // в секундах
+        let userName = "Пользователь"; // Имя для сертификата
+
+        // Элементы DOM
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const resourcesScreen = document.getElementById('resources-screen');
+        const questionContainer = document.getElementById('question-container');
+        const progressBar = document.getElementById('progress');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const startBtn = document.getElementById('start-btn');
+        const resourcesBtn = document.getElementById('resources-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const backToResultsBtn = document.getElementById('back-to-results-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const certificateBtn = document.getElementById('certificate-btn');
+        const scoreElement = document.getElementById('score');
+        const totalElement = document.getElementById('total');
+        const timerElement = document.getElementById('timer');
+        const quizTimerElement = document.getElementById('quiz-timer');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notification-text');
+        const securityLevelContainer = document.getElementById('security-level-container');
+        const levelIndicator = document.getElementById('level-indicator');
+        const correctCountElement = document.getElementById('correct-count');
+        const incorrectCountElement = document.getElementById('incorrect-count');
+        const timeSpentElement = document.getElementById('time-spent');
+        const nameModal = document.getElementById('name-modal');
+        const userNameInput = document.getElementById('user-name');
+        const saveNameBtn = document.getElementById('save-name-btn');
+        const skipNameBtn = document.getElementById('skip-name-btn');
+
+        // Инициализация теста
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', nextQuestion);
+        prevBtn.addEventListener('click', prevQuestion);
+        resourcesBtn.addEventListener('click', showResources);
+        restartBtn.addEventListener('click', restartQuiz);
+        backToResultsBtn.addEventListener('click', showResults);
+        shareBtn.addEventListener('click', shareResults);
+        certificateBtn.addEventListener('click', showNameModal);
+        saveNameBtn.addEventListener('click', saveUserName);
+        skipNameBtn.addEventListener('click', skipUserName);
+
+        // Загрузка PDF-файлов
+        document.getElementById('download-passwords').addEventListener('click', function(e) {
+            e.preventDefault();
+            generatePasswordPDF();
+        });
+        
+        document.getElementById('download-social').addEventListener('click', function(e) {
+            e.preventDefault();
+            generateSocialPDF();
+        });
+        
+        document.getElementById('download-phishing').addEventListener('click', function(e) {
+            e.preventDefault();
+            generatePhishingPDF();
+        });
+
+        document.getElementById('download-all').addEventListener('click', function(e) {
+            e.preventDefault();
+            generateAllPDFs();
+        });
+
+        // Функция показа уведомления
+        function showNotification(message, type = 'success') {
+            notificationText.textContent = message;
+            notification.className = 'notification show';
+            notification.style.background = type === 'success' ? 'var(--success)' : 
+                                           type === 'error' ? 'var(--danger)' : 
+                                           type === 'warning' ? 'var(--warning)' : 'var(--info)';
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Показать модальное окно для ввода имени
+        function showNameModal() {
+            nameModal.style.display = 'flex';
+        }
+
+        // Скрыть модальное окно
+        function hideNameModal() {
+            nameModal.style.display = 'none';
+        }
+
+        // Сохранить имя пользователя
+        function saveUserName() {
+            const name = userNameInput.value.trim();
+            if (name) {
+                userName = name;
+                hideNameModal();
+                generateCertificate();
+            } else {
+                showNotification("Пожалуйста, введите ваше имя", "warning");
+            }
+        }
+
+        // Пропустить ввод имени
+        function skipUserName() {
+            hideNameModal();
+            generateCertificate();
+        }
+
+        // Таймер
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            timerElement.style.display = 'flex';
+        }
+
+        function updateTimer() {
+            timeSpent = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(timeSpent / 60);
+            const seconds = timeSpent % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('time').textContent = timeString;
+            quizTimerElement.textContent = timeString;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerElement.style.display = 'none';
+        }
+
+        // Определение уровня безопасности
+        function getSecurityLevel(score) {
+            if (score >= 9) {
+                return {
+                    level: "Эксперт",
+                    description: "Отличные знания в области кибербезопасности! Вы следуете лучшим практикам и понимаете риски.",
+                    icon: "fas fa-user-shield",
+                    color: "expert"
+                };
+            } else if (score >= 7) {
+                return {
+                    level: "Хорошо защищён",
+                    description: "У вас хороший уровень защиты, но есть несколько областей для улучшения.",
+                    icon: "fas fa-user-check",
+                    color: "good"
+                };
+            } else if (score >= 5) {
+                return {
+                    level: "Средний уровень",
+                    description: "Есть базовые знания, но нужно больше внимания уделить безопасности.",
+                    icon: "fas fa-user",
+                    color: "medium"
+                };
+            } else {
+                return {
+                    level: "Начинающий",
+                    description: "Вам стоит серьезно заняться кибербезопасностью. Ознакомьтесь с материалами ниже.",
+                    icon: "fas fa-user-graduate",
+                    color: "beginner"
+                };
+            }
+        }
+
+        // Генерация сертификата
+        function generateCertificate() {
+            showNotification("Генерируем ваш сертификат...", "info");
+            
+            setTimeout(() => {
+                const doc = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Добавляем поддержку кириллицы
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-regular-webfont.ttf', 'Roboto', 'normal');
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-bold-webfont.ttf', 'Roboto', 'bold');
+                doc.setFont('Roboto');
+                
+                // Фон сертификата
+                doc.setFillColor(240, 240, 240);
+                doc.rect(0, 0, 297, 210, 'F');
+                
+                // Граница
+                doc.setDrawColor(52, 152, 219);
+                doc.setLineWidth(5);
+                doc.rect(15, 15, 267, 180);
+                
+                // Заголовок
+                doc.setFontSize(36);
+                doc.setTextColor(44, 62, 80);
+                doc.text("СЕРТИФИКАТ", 148.5, 50, { align: 'center' });
+                
+                // Подзаголовок
+                doc.setFontSize(18);
+                doc.setTextColor(100, 100, 100);
+                doc.text("Кибербезопасность", 148.5, 70, { align: 'center' });
+                
+                // Текст сертификата
+                doc.setFontSize(16);
+                doc.setTextColor(60, 60, 60);
+                doc.text("Настоящим удостоверяется, что", 148.5, 100, { align: 'center' });
+                
+                // Имя пользователя
+                doc.setFontSize(24);
+                doc.setTextColor(231, 76, 60);
+                doc.setFont('Roboto', 'bold');
+                doc.text(userName, 148.5, 115, { align: 'center' });
+                
+                // Результаты
+                doc.setFontSize(16);
+                doc.setTextColor(60, 60, 60);
+                doc.setFont('Roboto', 'normal');
+                doc.text(`успешно прошел тест по кибербезопасности`, 148.5, 130, { align: 'center' });
+                doc.text(`и набрал ${score} из ${questions.length} баллов`, 148.5, 140, { align: 'center' });
+                
+                // Уровень
+                const securityLevel = getSecurityLevel(score);
+                doc.setFontSize(20);
+                doc.setTextColor(52, 152, 219);
+                doc.setFont('Roboto', 'bold');
+                doc.text(`Уровень: ${securityLevel.level}`, 148.5, 155, { align: 'center' });
+                
+                // Дата
+                doc.setFontSize(14);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont('Roboto', 'normal');
+                const today = new Date();
+                const dateString = today.toLocaleDateString('ru-RU', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+                doc.text(`Дата: ${dateString}`, 148.5, 175, { align: 'center' });
+                
+                // Подпись
+                doc.setFontSize(12);
+                doc.text("Центр кибербезопасности", 148.5, 185, { align: 'center' });
+                
+                // Генерация имени файла с датой
+                const fileName = `Сертификат_${userName.replace(/\s+/g, '_')}_${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}.pdf`;
+                
+                doc.save(fileName);
+                showNotification("Сертификат успешно скачан!", "success");
+            }, 1000);
+        }
+
+        // Поделиться результатами
+        function shareResults() {
+            const securityLevel = getSecurityLevel(score);
+            const shareText = `Я прошел тест по кибербезопасности и набрал ${score} из ${questions.length} баллов! Мой уровень: ${securityLevel.level}. Проверь и ты свою киберзащищенность!`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Мой результат теста по кибербезопасности',
+                    text: shareText,
+                    url: window.location.href
+                })
+                .then(() => showNotification("Спасибо за分享!", "success"))
+                .catch(error => {
+                    // Если пользователь отменил шаринг, показываем альтернативу
+                    copyToClipboard(shareText + " " + window.location.href);
+                });
+            } else {
+                copyToClipboard(shareText + " " + window.location.href);
+            }
+        }
+
+        // Копирование в буфер обмена
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => showNotification("Результат скопирован в буфер обмена!", "success"))
+                .catch(err => {
+                    console.error('Ошибка копирования: ', err);
+                    showNotification("Не удалось скопировать", "error");
+                });
+        }
+
+        // Генерация PDF для паролей
+        function generatePasswordPDF() {
+            const loading = document.getElementById('loading-passwords');
+            loading.style.display = 'flex';
+            
+            setTimeout(() => {
+                const doc = new jsPDF();
+                
+                // Добавляем поддержку кириллицы
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-regular-webfont.ttf', 'Roboto', 'normal');
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-bold-webfont.ttf', 'Roboto', 'bold');
+                doc.setFont('Roboto');
+                
+                // Заголовок
+                doc.setFontSize(22);
+                doc.setTextColor(40, 40, 150);
+                doc.text("Памятка: Защита паролей", 105, 20, { align: 'center' });
+                
+                // Подзаголовок
+                doc.setFontSize(16);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Как создать надежный пароль", 20, 40);
+                
+                // Содержимое
+                doc.setFontSize(12);
+                const passwordTips = [
+                    "• Используйте не менее 12-14 символов в пароле",
+                    "• Комбинируйте заглавные и строчные буквы, цифры и специальные символы",
+                    "• Не используйте личную информацию (имена, даты рождения, клички животных)",
+                    "• Избегайте распространенных последовательностей (qwerty, 123456, password)",
+                    "• Используйте мнемонические фразы: 'ВКрасномДоме2023!'",
+                    "• Для важных аккаунтов используйте пароли длиной 16+ символов",
+                    "• Никогда не используйте один и тот же пароль для разных сервисов"
+                ];
+                
+                let y = 50;
+                passwordTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Второй раздел
+                y += 10;
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.setFontSize(16);
+                doc.text("Советы по управлению паролями", 20, y);
+                
+                doc.setFontSize(12);
+                y += 10;
+                const managementTips = [
+                    "• Используйте менеджер паролей (LastPass, Bitwarden, KeePass)",
+                    "• Включите двухфакторную аутентификацию для всех важных сервисов",
+                    "• Регулярно (раз в 3-6 месяцев) меняйте пароли к важным аккаунтам",
+                    "• Никогда не сохраняйте пароли в браузере на общественных устройствах",
+                    "• Используйте аппаратные ключи безопасности для особо важных аккаунтов",
+                    "• Проверяйте свои пароли на утечки с помощью сервиса haveibeenpwned.com",
+                    "• Не передавайте свои пароли другим людям, даже близким"
+                ];
+                
+                managementTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Третий раздел
+                y += 10;
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(16);
+                doc.text("Что делать при утечке пароля", 20, y);
+                
+                doc.setFontSize(12);
+                y += 10;
+                const leakTips = [
+                    "• Немедленно смените пароль на скомпрометированном аккаунте",
+                    "• Проверьте, не используете ли вы этот пароль где-либо еще",
+                    "• Включите двухфакторную аутентификацию, если еще не сделали этого",
+                    "• Проверьте настройки безопасности аккаунта на наличие подозрительных изменений",
+                    "• Предупредите контакты о возможном взломе вашего аккаунта",
+                    "• Для финансовых аккаунтов свяжитесь с банком для дополнительной проверки"
+                ];
+                
+                leakTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                doc.save('Памятка_Защита_паролей.pdf');
+                loading.style.display = 'none';
+                showNotification("PDF успешно скачан!", "success");
+            }, 500);
+        }
+
+        // Генерация PDF для безопасности в соцсетях
+        function generateSocialPDF() {
+            const loading = document.getElementById('loading-social');
+            loading.style.display = 'flex';
+            
+            setTimeout(() => {
+                const doc = new jsPDF();
+                
+                // Добавляем поддержку кириллицы
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-regular-webfont.ttf', 'Roboto', 'normal');
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-bold-webfont.ttf', 'Roboto', 'bold');
+                doc.setFont('Roboto');
+                
+                // Заголовок
+                doc.setFontSize(22);
+                doc.setTextColor(40, 40, 150);
+                doc.text("Чек-лист: Безопасность в соцсетях", 105, 20, { align: 'center' });
+                
+                // Подзаголовок
+                doc.setFontSize(16);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Настройки приватности", 20, 40);
+                
+                // Содержимое
+                doc.setFontSize(12);
+                const privacyTips = [
+                    "• Ограничьте видимость профиля только друзьям",
+                    "• Отключите индексирование вашего профиля поисковыми системами",
+                    "• Ограничьте возможность тегирования вас на фотографиях без вашего разрешения",
+                    "• Запретите отображение вашего профиля в рекомендациях",
+                    "• Регулярно проверяйте и обновляйте настройки конфиденциальности",
+                    "• Ограничьте видимость ваших прошлых публикаций",
+                    "• Отключите определение местоположения для соцсетей"
+                ];
+                
+                let y = 50;
+                privacyTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Второй раздел
+                y += 10;
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.setFontSize(16);
+                doc.text("Что никогда не стоит публиковать", 20, y);
+                
+                doc.setFontSize(12);
+                y += 10;
+                const contentTips = [
+                    "• Личные данные: полный адрес, номер паспорта, данные кредитных карт",
+                    "• Информацию о текущем местоположении в реальном времени",
+                    "• Фотографии документов, билетов, посадочных талонов",
+                    "• Информацию о графике работы и отпусках",
+                    "• Компрометирующие фотографии себя и друзей",
+                    "• Информацию о детях (школа, расписание, кружки)",
+                    "• Фотографии дорогих покупок и имущества"
+                ];
+                
+                contentTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Третий раздел
+                y += 10;
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(16);
+                doc.text("Защита от мошенников и взломов", 20, y);
+                
+                doc.setFontSize(12);
+                y += 10;
+                const securityTips = [
+                    "• Никогда не переходите по подозрительным ссылкам",
+                    "• Не участвуйте в викторинах и опросах, раскрывающих личную информацию",
+                    "• Внимательно проверяйте запросы на добавление в друзья от незнакомцев",
+                    "• Регулярно проверяйте активность вашего аккаунта и историю входов",
+                    "• Используйте сложные уникальные пароли и двухфакторную аутентификацию",
+                    "• Не подключайтесь к соцсетям через общественный Wi-Fi без VPN",
+                    "• Будьте осторожны с приложениями, запрашивающими доступ к вашему аккаунту"
+                ];
+                
+                securityTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                doc.save('Чек-лист_Безопасность_в_соцсетях.pdf');
+                loading.style.display = 'none';
+                showNotification("PDF успешно скачан!", "success");
+            }, 500);
+        }
+
+        // Генерация PDF для противодействия фишингу
+        function generatePhishingPDF() {
+            const loading = document.getElementById('loading-phishing');
+            loading.style.display = 'flex';
+            
+            setTimeout(() => {
+                const doc = new jsPDF();
+                
+                // Добавляем поддержку кириллицы
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-regular-webfont.ttf', 'Roboto', 'normal');
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-bold-webfont.ttf', 'Roboto', 'bold');
+                doc.setFont('Roboto');
+                
+                // Заголовок
+                doc.setFontSize(22);
+                doc.setTextColor(40, 40, 150);
+                doc.text("Памятка: Противодействие фишингу", 105, 20, { align: 'center' });
+                
+                // Подзаголовок
+                doc.setFontSize(16);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Как распознать фишинговое письмо", 20, 40);
+                
+                // Содержимое
+                doc.setFontSize(12);
+                const recognitionTips = [
+                    "• Проверяйте адрес отправителя (часто отличается от официального)",
+                    "• Обращайте внимание на ошибки в тексте и форматировании",
+                    "• Наведите курсор на ссылку, чтобы увидеть настоящий URL",
+                    "• Остерегайтесь писем, создающих ощущение срочности или угрозы",
+                    "• Фишинговые письма часто содержат требования немедленных действий",
+                    "• Официальные организации редко запрашивают конфиденциальные данные по email",
+                    "• Подозрительные вложения - красный флаг"
+                ];
+                
+                let y = 50;
+                recognitionTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Второй раздел
+                y += 10;
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.setFontSize(16);
+                doc.text("Что делать при получении подозрительного письма", 20, y);
+                
+                doc.setFontSize(12);
+                y += 10;
+                const actionTips = [
+                    "• Не переходите по ссылкам и не скачивайте вложения",
+                    "• Не отвечайте на письмо и не звоните по указанным номерам",
+                    "• Сообщите о фишинге в техническую поддержку сервиса",
+                    "• Если уже перешли по ссылке, немедленно смените пароли",
+                    "• Проверьте историю операций в финансовых сервисах",
+                    "• Включите двухфакторную аутентификацию для дополнительной защиты",
+                    "• Отсканируйте устройство антивирусом, если скачали вложение"
+                ];
+                
+                actionTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Третий раздел
+                y += 10;
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(16);
+                doc.text("Защита от фишинга и мошенничества", 20, y);
+                
+                doc.setFontSize(12);
+                y += 10;
+                const protectionTips = [
+                    "• Внимательно проверяйте адрес сайта (https:// и правильное доменное имя)",
+                    "• Используйте антивирусное ПО с функцией антифишинга",
+                    "• Включайте двухфакторную аутентификацию везде, где это возможно",
+                    "• Регулярно обновляйте браузер и операционную систему",
+                    "• Используйте менеджер паролей",
+                    "• Обучайтесь и оставайтесь в курсе новых фишинговых схем",
+                    "• Установите расширения для браузера, блокирующие фишинговые сайты"
+                ];
+                
+                protectionTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                doc.save('Памятка_Противодействие_фишингу.pdf');
+                loading.style.display = 'none';
+                showNotification("PDF успешно скачан!", "success");
+            }, 500);
+        }
+
+        // Генерация всех PDF одним файлом
+        function generateAllPDFs() {
+            const loading = document.getElementById('loading-all');
+            loading.style.display = 'flex';
+            
+            setTimeout(() => {
+                const doc = new jsPDF();
+                
+                // Добавляем поддержку кириллицы
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-regular-webfont.ttf', 'Roboto', 'normal');
+                doc.addFont('https://cdn.jsdelivr.net/npm/roboto-font@0.1.0/fonts/Roboto/roboto-bold-webfont.ttf', 'Roboto', 'bold');
+                doc.setFont('Roboto');
+                
+                // Титульная страница
+                doc.setFontSize(28);
+                doc.setTextColor(40, 40, 150);
+                doc.text("Кибербезопасность:", 105, 50, { align: 'center' });
+                doc.text("Полезные материалы", 105, 70, { align: 'center' });
+                
+                doc.setFontSize(16);
+                doc.setTextColor(100, 100, 100);
+                doc.text("Полный комплект памяток", 105, 90, { align: 'center' });
+                
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Содержание:", 20, 120);
+                
+                const content = [
+                    "1. Защита паролей",
+                    "2. Безопасность в социальных сетях", 
+                    "3. Противодействие фишингу"
+                ];
+                
+                let y = 130;
+                content.forEach(item => {
+                    doc.text(item, 30, y);
+                    y += 10;
+                });
+                
+                // Раздел 1: Защита паролей
+                doc.addPage();
+                doc.setFontSize(22);
+                doc.setTextColor(40, 40, 150);
+                doc.text("1. Памятка: Защита паролей", 105, 20, { align: 'center' });
+                
+                doc.setFontSize(16);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Как создать надежный пароль", 20, 40);
+                
+                doc.setFontSize(12);
+                const passwordTips = [
+                    "• Используйте не менее 12-14 символов в пароле",
+                    "• Комбинируйте заглавные и строчные буквы, цифры и специальные символы",
+                    "• Не используйте личную информацию (имена, даты рождения, клички животных)",
+                    "• Избегайте распространенных последовательностей (qwerty, 123456, password)",
+                    "• Используйте мнемонические фразы: 'ВКрасномДоме2023!'",
+                    "• Для важных аккаунтов используйте пароли длиной 16+ символов",
+                    "• Никогда не используйте один и тот же пароль для разных сервисов"
+                ];
+                
+                y = 50;
+                passwordTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Раздел 2: Безопасность в соцсетях
+                doc.addPage();
+                doc.setFontSize(22);
+                doc.setTextColor(40, 40, 150);
+                doc.text("2. Чек-лист: Безопасность в соцсетях", 105, 20, { align: 'center' });
+                
+                doc.setFontSize(16);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Настройки приватности", 20, 40);
+                
+                doc.setFontSize(12);
+                const socialTips = [
+                    "• Ограничьте видимость профиля только друзьям",
+                    "• Отключите индексирование вашего профиля поисковыми системами",
+                    "• Ограничьте возможность тегирования вас на фотографиях без вашего разрешения",
+                    "• Запретите отображение вашего профиля в рекомендациях",
+                    "• Регулярно проверяйте и обновляйте настройки конфиденциальности",
+                    "• Ограничьте видимость ваших прошлых публикаций",
+                    "• Отключите определение местоположения для соцсетей"
+                ];
+                
+                y = 50;
+                socialTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                // Раздел 3: Противодействие фишингу
+                doc.addPage();
+                doc.setFontSize(22);
+                doc.setTextColor(40, 40, 150);
+                doc.text("3. Памятка: Противодействие фишингу", 105, 20, { align: 'center' });
+                
+                doc.setFontSize(16);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Как распознать фишинговое письмо", 20, 40);
+                
+                doc.setFontSize(12);
+                const phishingTips = [
+                    "• Проверяйте адрес отправителя (часто отличается от официального)",
+                    "• Обращайте внимание на ошибки в тексте и форматировании",
+                    "• Наведите курсор на ссылку, чтобы увидеть настоящий URL",
+                    "• Остерегайтесь писем, создающих ощущение срочности или угрозы",
+                    "• Фишинговые письма часто содержат требования немедленных действий",
+                    "• Официальные организации редко запрашивают конфиденциальные данные по email",
+                    "• Подозрительные вложения - красный флаг"
+                ];
+                
+                y = 50;
+                phishingTips.forEach(tip => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(tip, 20, y);
+                    y += 8;
+                });
+                
+                doc.save('Полный_комплект_кибербезопасность.pdf');
+                loading.style.display = 'none';
+                showNotification("Все PDF успешно скачаны!", "success");
+            }, 500);
+        }
+
+        function startQuiz() {
+            startScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            currentQuestion = 0;
+            userAnswers = [];
+            score = 0;
+            timeSpent = 0;
+            showQuestion();
+            updateProgress();
+            startTimer();
+            
+            currentQuestionElement.textContent = currentQuestion + 1;
+            totalQuestionsElement.textContent = questions.length;
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionContainer.innerHTML = `
+                <div class="question fade-in">
+                    <h3>${question.question}</h3>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option ${userAnswers[currentQuestion] === index ? 'selected' : ''}" data-index="${index}">
+                                <div class="option-number">${String.fromCharCode(65 + index)}</div>
+                                <div>${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Добавляем обработчики для вариантов ответа
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    userAnswers[currentQuestion] = parseInt(this.getAttribute('data-index'));
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+
+            // Обновляем состояние кнопок
+            prevBtn.style.display = currentQuestion === 0 ? 'none' : 'flex';
+            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Завершить тест' : 'Далее';
+            nextBtn.innerHTML = currentQuestion === questions.length - 1 ? 
+                'Завершить тест <i class="fas fa-flag-checkered"></i>' : 
+                'Далее <i class="fas fa-arrow-right"></i>';
+        }
+
+        function nextQuestion() {
+            if (userAnswers[currentQuestion] === undefined) {
+                showNotification("Пожалуйста, выберите ответ", "warning");
+                return;
+            }
+
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                currentQuestionElement.textContent = currentQuestion + 1;
+                showQuestion();
+            } else {
+                stopTimer();
+                showResults();
+            }
+            updateProgress();
+        }
+
+        function prevQuestion() {
+            currentQuestion--;
+            currentQuestionElement.textContent = currentQuestion + 1;
+            showQuestion();
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function showResults() {
+            quizScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+
+            // Вычисляем результаты
+            score = 0;
+            let resultsHTML = '';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correctIndex;
+                
+                if (isCorrect) score++;
+                
+                resultsHTML += `
+                    <div class="result-item fade-in ${isCorrect ? 'correct' : 'incorrect'}">
+                        <p><strong>Вопрос ${index + 1}:</strong> ${question.question}</p>
+                        <p><i class="fas fa-${isCorrect ? 'check' : 'times'}" style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'}; margin-right: 5px;"></i> 
+                        Ваш ответ: ${question.options[userAnswer]}</p>
+                        ${!isCorrect ? `<p><i class="fas fa-check" style="color: var(--success); margin-right: 5px;"></i> Правильный ответ: ${question.options[question.correctIndex]}</p>` : ''}
+                        <div class="explanation">
+                            <strong><i class="fas fa-lightbulb"></i> Пояснение:</strong> ${question.explanation}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('results-container').innerHTML = resultsHTML;
+            scoreElement.textContent = score;
+            totalElement.textContent = questions.length;
+            
+            // Показываем статистику
+            const correctCount = score;
+            const incorrectCount = questions.length - score;
+            correctCountElement.textContent = correctCount;
+            incorrectCountElement.textContent = incorrectCount;
+            
+            // Форматируем время
+            const minutes = Math.floor(timeSpent / 60);
+            const seconds = timeSpent % 60;
+            timeSpentElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Определяем уровень безопасности
+            const securityLevel = getSecurityLevel(score);
+            
+            // Отображаем уровень безопасности
+            securityLevelContainer.innerHTML = `
+                <div class="security-level fade-in">
+                    <div class="level-icon ${securityLevel.color}">
+                        <i class="${securityLevel.icon}"></i>
+                    </div>
+                    <div class="level-title">${securityLevel.level}</div>
+                    <div class="level-description">${securityLevel.description}</div>
+                </div>
+            `;
+            
+            // Создаем индикатор уровня
+            levelIndicator.innerHTML = '';
+            for (let i = 0; i < 4; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'level-dot';
+                
+                if (i === 0 && score <= 4) {
+                    dot.classList.add('active', 'beginner');
+                } else if (i === 1 && score >= 5 && score <= 6) {
+                    dot.classList.add('active', 'partial');
+                } else if (i === 2 && score >= 7 && score <= 8) {
+                    dot.classList.add('active');
+                } else if (i === 3 && score >= 9) {
+                    dot.classList.add('active');
+                }
+                
+                levelIndicator.appendChild(dot);
+            }
+            
+            showNotification(`Тест завершен! Ваш результат: ${score} из ${questions.length}`, "success");
+        }
+
+        function showResources() {
+            resultsScreen.style.display = 'none';
+            resourcesScreen.style.display = 'block';
+        }
+
+        function restartQuiz() {
+            resourcesScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+            stopTimer();
+        }
+    </script>
+</body>
+</html>
